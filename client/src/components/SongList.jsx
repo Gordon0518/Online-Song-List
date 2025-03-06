@@ -5,41 +5,38 @@ import { Button, List, ListItem, ListItemText, ListItemSecondaryAction, IconButt
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 
 const SongList = () => {
-    const [songs, setSongs] = useState([]);
-      const [loading, setLoading] = useState(true);
-      const [error, setError] = useState(null);
+  const [songs, setSongs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-      useEffect(() => {
-        const fetchSongs = async () => {
-          try {
-            const response = await axios.get('/api/songList');
-            console.log('Fetched songs:', response.data); 
-            setSongs(response.data);
-            setLoading(false);
-          } catch (err) {
-            setError('Failed to load songs');
-            setLoading(false);
-          }
-        };
-        fetchSongs();
-      }, []);
-
-      const deleteSong = async (songid) => {
-        console.log('Deleting song with ID:', songid);
-        try {
-          await axios.delete(`/api/deleteSong/${songid}`);
-          setSongs(songs.filter((song) => song._id !== songid));
-          
-        } catch (err) {
-          setError('Failed to delete song');
-        }
+  useEffect(() => {
+    const fetchSongs = async () => {
+      try {
+        const response = await axios.get('/api/songList');
+        setSongs(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError('Failed to load songs');
+        setLoading(false);
       }
+    };
+    fetchSongs();
+  }, []);
 
-      if (loading) return <div>Loading...</div>;
-      if (error) return <div>{error}</div>;
+  const deleteSong = async (songid) => {
+    try {
+      await axios.delete(`/api/deleteSong/${songid}`);
+      setSongs(songs.filter((song) => song._id !== songid));
+    } catch (err) {
+      setError('Failed to delete song');
+    }
+  };
 
-        return (
-          <div>
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
+  return (
+    <div>
       <Button component={Link} to="/addSong" variant="contained" color="primary" style={{ marginBottom: '20px' }}>
         Add Song
       </Button>
@@ -66,7 +63,7 @@ const SongList = () => {
         </List>
       )}
     </div>
-      );
-    };
+  );
+};
 
-export default SongList;        
+export default SongList;

@@ -3,7 +3,6 @@
   "private": true,
   "proxy": "http://localhost:5000",
   "version": "1.0.0",
-  "homepage": "https://Gordon0518.github.io/Online-Song-List",
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
@@ -25,8 +24,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "predeploy": "npm run build"
   },
   "devDependencies": {
     "gh-pages": "^5.0.0"
