@@ -1,11 +1,13 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const app = express();
-const port = 5000;
+
 
 app.use(cors());
 app.use(express.json());
+
 
 //mongoDB connection
 const mongoURI = 'mongodb+srv://gordon0518:333555@songlist.gjq1b.mongodb.net/songlist?retryWrites=true&w=majority&appName=SongList';
@@ -108,8 +110,13 @@ app.get('/api/songList/:id', async (req, res) => {
 });
 
 
+app.use(express.static(path.join(__dirname, 'client/build')));
 
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${[port]}`);
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
 });
 
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
