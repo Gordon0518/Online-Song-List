@@ -1,9 +1,14 @@
-{
-    "name": "todo-app-backend",
+
+  {
+    "name": "songlist",
     "version": "1.0.0",
-    "main": "server.js",
+    "private": true,
+    "homepage": "https://Gordon0518.github.io/Online-Song-List",
     "scripts": {
-      "start": "node server.js"
+      "start": "react-scripts start",
+      "build": "react-scripts build",
+      "predeploy": "npm run build",
+      "deploy": "gh-pages -d build"
     },
     "dependencies": {
       "cors": "^2.8.5",
