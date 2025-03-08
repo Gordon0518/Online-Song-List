@@ -75,8 +75,8 @@ const EditSong = () => {
           Update Song
         </Button>
         <Button variant="contained" color="secondary" style={{ marginTop: '20px', marginLeft: '20px' }} onClick={() => navigate('/')}>
-                  Cancel
-                </Button>
+          Cancel
+        </Button>
       </form>
     </Container>
   );

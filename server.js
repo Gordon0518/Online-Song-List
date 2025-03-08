@@ -20,6 +20,7 @@ mongoose.connect(mongoURI, {
   console.error('Fail to connect MongoDB:', error);
 });
 
+//song schema
 const songSchema = new mongoose.Schema({
   songName: {type: String, required: true},
   singer: {type: String, required: true},
@@ -27,6 +28,47 @@ const songSchema = new mongoose.Schema({
 });
 
 const Song = mongoose.model('Song', songSchema);
+
+//user schema
+const userSchema = new mongoose.Schema({
+  userid: {type: String, required: true, unique:true},
+  username: {type: String, required: true, unique:true},
+  password: {type: String, required: true},
+});
+
+const User = mongoose.model('User', userSchema);
+
+
+
+//register
+app.post('/api/register', async(req, res) => {
+  const{userid, username, password} = req.body;
+  try{
+    const user = new User({userid, username, password});
+    await user.save();
+    res.status(201).json({message: 'User registered successfully'});
+  }catch(error){
+    console.error('Error registering user:', error);
+    res.status(500).json({error: 'Error registering user'});
+  }
+});
+
+//login
+app.post('/api/login', async(req, res) => {
+  const{userid, password} = req.body;
+  try{
+    const user = await User.findOne({userid, password});
+    if(user){
+      res.json({message: 'Login successful'});
+    }
+    else{
+      res.status(401).json({error: 'Invalid username or password'});
+    }
+  }catch(error){
+    console.error('Error logging in:', error);
+    res.status(500).json({error: 'Error logging in'});
+  }
+});
 
 
 
