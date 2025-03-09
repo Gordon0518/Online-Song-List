@@ -3,39 +3,38 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Typography, Container } from '@mui/material';
 
+const CreateSong = ({ user, onSongAdded }) => {
+  const [songName, setSongName] = useState('');
+  const [singer, setSinger] = useState('');
+  const [songURL, setSongURL] = useState('');
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-const CreateSong = ({ onSongAdded }) => {
-    const [songName, setSongName] = useState('');
-    const [singer, setSinger] = useState('');
-    const [songURL, setSongURL] = useState('');
-    const [error, setError] = useState(null);
-    const navigate = useNavigate();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('/api/addSong', {
+        songName,
+        singer,
+        songURL,
+        creator: user, // Include the creator information
+      });
+      setSongName('');
+      setSinger('');
+      setSongURL('');
+      setError(null);
+      if (onSongAdded) {
+        onSongAdded(response.data);
+      }
+      navigate('/songList');
+    } catch (err) {
+      console.error('Error adding song:', err);
+      setError('Failed to add song');
+    }
+  };
 
-
-    const handleSubmit = async (e) => {
-        e.preventDefault(); 
-        try {
-          const response = await axios.post('/api/addSong', {
-            songName,
-            singer,
-            songURL,
-          });
-          setSongName(''); 
-          setSinger('');
-          setSongURL('');
-          setError(null); 
-          if (onSongAdded) {
-            onSongAdded(response.data); 
-          }
-          navigate('/');
-        } catch (err) {
-          console.error('Error adding song:', err);
-          setError('Failed to add song');
-        }
-      };
-    
-      return (
-        <Container>
+  return (
+    <Container>
       <Typography variant="h4" component="h2" gutterBottom>
         Add a New Song
       </Typography>
@@ -67,14 +66,19 @@ const CreateSong = ({ onSongAdded }) => {
         <Button type="submit" variant="contained" color="primary" style={{ marginTop: '20px' }}>
           Add Song
         </Button>
-        <Button variant="contained" color="secondary" style={{ marginTop: '20px', marginLeft: '20px' }} onClick={() => navigate('/')}>
+        <Button
+          variant="contained"
+          color="secondary"
+          style={{ marginTop: '20px', marginLeft: '20px' }}
+          onClick={() => navigate('/')}
+        >
           Cancel
         </Button>
       </form>
     </Container>
-      );
-    };
-    
-    export default CreateSong;
+  );
+};
 
-    
+export default CreateSong;
+
+

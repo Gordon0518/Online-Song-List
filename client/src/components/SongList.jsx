@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button, List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, Typography } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 
-const SongList = () => {
+const SongList = ({ user }) => {
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,7 +12,7 @@ const SongList = () => {
   useEffect(() => {
     const fetchSongs = async () => {
       try {
-        const response = await axios.get('/api/songList');
+        const response = await axios.get(`/api/songList?creator=${user}`);
         setSongs(response.data);
         setLoading(false);
       } catch (err) {
@@ -21,7 +21,7 @@ const SongList = () => {
       }
     };
     fetchSongs();
-  }, []);
+  }, [user]);
 
   const deleteSong = async (songid) => {
     try {
