@@ -2,6 +2,10 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -9,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB connection
-const mongoURI = 'mongodb+srv://gordon0518:333555@songlist.gjq1b.mongodb.net/songlist?retryWrites=true&w=majority&appName=SongList';
+const mongoURI = process.env.MONGO_URI;
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
