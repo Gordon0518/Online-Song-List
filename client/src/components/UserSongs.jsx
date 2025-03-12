@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
-  Button,
   List,
   Typography,
   CircularProgress,
@@ -12,9 +11,10 @@ import {
   CardActions,
   IconButton,
   Divider,
+  Button,
   Paper,
 } from '@mui/material';
-import { Delete as DeleteIcon, Edit as EditIcon, Add as AddIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon, Edit as EditIcon, ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -34,28 +34,26 @@ const SongCard = styled(Card)(({ theme }) => ({
   },
 }));
 
-const SongList = ({ user }) => {
+const UserSongs = ({ user }) => {
+  const { username } = useParams();
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) {
-      const fetchSongs = async () => {
-        try {
-          const response = await axios.get(`/api/songListByCreator?creator=${user}`);
-          setSongs(response.data);
-          setLoading(false);
-        } catch (err) {
-          setError('Failed to load songs');
-          setLoading(false);
-        }
-      };
-      fetchSongs();
-    } else {
-      setLoading(false);
-    }
-  }, [user]);
+    const fetchSongs = async () => {
+      try {
+        const response = await axios.get(`/api/songListByCreator?creator=${username}`);
+        setSongs(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError('Failed to load songs');
+        setLoading(false);
+      }
+    };
+    fetchSongs();
+  }, [username]);
 
   const deleteSong = async (songid) => {
     if (window.confirm('Are you sure you want to delete this song?')) {
@@ -72,33 +70,6 @@ const SongList = ({ user }) => {
     return (
       <Box sx={{ background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)', minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <CircularProgress size={60} thickness={4} />
-      </Box>
-    );
-  }
-
-  if (!user) {
-    return (
-      <Box sx={{ background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)', minHeight: '100vh', pt: 8 }}>
-        <StyledPaper sx={{ maxWidth: 600, mx: 'auto', textAlign: 'center' }}>
-          <Typography variant="h5" sx={{ fontWeight: 700, color: '#1976d2', mb: 3 }}>
-            Please log in to manage your songs
-          </Typography>
-          <Button
-            component={Link}
-            to="/login"
-            variant="contained"
-            size="large"
-            sx={{
-              py: 1.5,
-              px: 4,
-              borderRadius: '8px',
-              backgroundColor: '#1976d2',
-              '&:hover': { backgroundColor: '#1565c0' },
-            }}
-          >
-            Login
-          </Button>
-        </StyledPaper>
       </Box>
     );
   }
@@ -129,22 +100,22 @@ const SongList = ({ user }) => {
       <StyledPaper sx={{ maxWidth: 800, mx: 'auto' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
           <Typography variant="h4" sx={{ fontWeight: 700, color: '#1976d2' }}>
-            My Songs
+            Songs by {username}
           </Typography>
           <Button
-            component={Link}
-            to="/addSong"
-            variant="contained"
-            startIcon={<AddIcon />}
+            variant="outlined"
+            startIcon={<ArrowBackIcon />}
+            onClick={() => navigate('/public')}
             sx={{
               py: 1.5,
               px: 3,
               borderRadius: '8px',
-              backgroundColor: '#1976d2',
-              '&:hover': { backgroundColor: '#1565c0' },
+              borderColor: '#1976d2',
+              color: '#1976d2',
+              '&:hover': { borderColor: '#1565c0', color: '#1565c0' },
             }}
           >
-            Add Song
+            Back to Community
           </Button>
         </Box>
         
@@ -152,7 +123,7 @@ const SongList = ({ user }) => {
         
         {songs.length === 0 ? (
           <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
-            No songs yet—add some to get started!
+            No songs available from {username}
           </Typography>
         ) : (
           <List>
@@ -178,24 +149,28 @@ const SongList = ({ user }) => {
                     </Typography>
                   )}
                 </CardContent>
-                <Divider />
-                <CardActions sx={{ justifyContent: 'flex-end', py: 1 }}>
-                  <IconButton
-                    component={Link}
-                    to={`/editSong/${song._id}`}
-                    aria-label="edit"
-                    sx={{ color: '#42a5f5', '&:hover': { color: '#1976d2' } }}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    onClick={() => deleteSong(song._id)}
-                    aria-label="delete"
-                    sx={{ color: '#ef5350', '&:hover': { color: '#d32f2f' } }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </CardActions>
+                {user === username && (
+                  <>
+                    <Divider />
+                    <CardActions sx={{ justifyContent: 'flex-end', py: 1 }}>
+                      <IconButton
+                        component={Link}
+                        to={`/editSong/${song._id}`}
+                        aria-label="edit"
+                        sx={{ color: '#42a5f5', '&:hover': { color: '#1976d2' } }}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => deleteSong(song._id)}
+                        aria-label="delete"
+                        sx={{ color: '#ef5350', '&:hover': { color: '#d32f2f' } }}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </CardActions>
+                  </>
+                )}
               </SongCard>
             ))}
           </List>
@@ -205,4 +180,4 @@ const SongList = ({ user }) => {
   );
 };
 
-export default SongList;
+export default UserSongs;

@@ -1,84 +1,99 @@
 import React, { useState } from 'react';
+import { Typography, Container, Box, Paper, TextField, Button } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { TextField, Button, Typography, Container } from '@mui/material';
 
-const CreateSong = ({ user, onSongAdded }) => {
-  const [songName, setSongName] = useState('');
-  const [singer, setSinger] = useState('');
-  const [songURL, setSongURL] = useState('');
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(4),
+  borderRadius: '16px',
+  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+  boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+}));
+
+const CreateSong = ({ user }) => {
+  const [formData, setFormData] = useState({
+    songName: '',
+    singer: '',
+    songURL: '',
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/addSong', {
-        songName,
-        singer,
-        songURL,
-        creator: user, // Include the creator information
-      });
-      setSongName('');
-      setSinger('');
-      setSongURL('');
-      setError(null);
-      if (onSongAdded) {
-        onSongAdded(response.data);
-      }
-      navigate('/songList');
-    } catch (err) {
-      console.error('Error adding song:', err);
-      setError('Failed to add song');
+      await axios.post('/api/addSong', { ...formData, creator: user });
+      setFormData({ songName: '', singer: '', songURL: '' });
+      alert('Song added successfully!');
+    } catch (error) {
+      alert('Error adding song');
     }
   };
 
   return (
-    <Container>
-      <Typography variant="h4" component="h2" gutterBottom>
-        Add a New Song
-      </Typography>
-      {error && <Typography color="error">{error}</Typography>}
-      <form onSubmit={handleSubmit}>
-        <TextField
-          label="Song Name"
-          value={songName}
-          onChange={(e) => setSongName(e.target.value)}
-          required
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Singer"
-          value={singer}
-          onChange={(e) => setSinger(e.target.value)}
-          required
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Song URL (optional)"
-          value={songURL}
-          onChange={(e) => setSongURL(e.target.value)}
-          fullWidth
-          margin="normal"
-        />
-        <Button type="submit" variant="contained" color="primary" style={{ marginTop: '20px' }}>
-          Add Song
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          style={{ marginTop: '20px', marginLeft: '20px' }}
-          onClick={() => navigate('/')}
+    <Container sx={{ background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)', minHeight: '100vh', py: 4 }}>
+      <StyledPaper elevation={3}>
+        <Typography 
+          variant="h4" 
+          sx={{ fontWeight: 700, color: '#1976d2', mb: 4, textAlign: 'center' }}
         >
-          Cancel
-        </Button>
-      </form>
+          Add New Song
+        </Typography>
+        
+        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <TextField
+            label="Song Name"
+            name="songName"
+            value={formData.songName}
+            onChange={handleChange}
+            required
+            variant="outlined"
+            fullWidth
+            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '8px' } }}
+          />
+          
+          <TextField
+            label="Singer"
+            name="singer"
+            value={formData.singer}
+            onChange={handleChange}
+            required
+            variant="outlined"
+            fullWidth
+            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '8px' } }}
+          />
+          
+          <TextField
+            label="Song URL (optional)"
+            name="songURL"
+            value={formData.songURL}
+            onChange={handleChange}
+            variant="outlined"
+            fullWidth
+            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '8px' } }}
+          />
+          
+          <Button
+            type="submit"
+            variant="contained"
+            size="large"
+            sx={{
+              mt: 2,
+              py: 1.5,
+              borderRadius: '8px',
+              backgroundColor: '#1976d2',
+              '&:hover': { backgroundColor: '#1565c0' },
+            }}
+          >
+            Add Song
+          </Button>
+        </Box>
+      </StyledPaper>
     </Container>
   );
 };
 
 export default CreateSong;
-
 
