@@ -196,7 +196,7 @@ const Public = ({ user }) => {
                       variant="body2" 
                       color="text.secondary"
                     >
-                      {u.totalSongLikes} song likes • {u.likeCount} creator likes
+                      {u.likeCount} creator likes
                     </Typography>
                   }
                 />

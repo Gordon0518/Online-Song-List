@@ -58,7 +58,7 @@ function Header({ user, setUser }) {
             <NavButton component={Link} to="/songList">My Songs</NavButton>
             <NavButton component={Link} to="/public">Community</NavButton>
             <NavButton component={Link} to="/search">Search</NavButton>
-            <NavButton component={Link} to="/about">About</NavButton>
+            
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
